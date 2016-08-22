@@ -191,6 +191,8 @@ public interface IJumbleService {
 
     void sendAccessTokens(List<String> tokens);
 
+    void sendDeviceInfo(int session, boolean existUsableMic, boolean existUsableSpeaker);
+
     void requestBanList();
 
     void requestUserList();

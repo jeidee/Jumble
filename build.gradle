@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:21.+'
-    compile 'com.google.protobuf:protobuf-java:2.5.0'
+    compile 'com.google.protobuf:protobuf-java:2.6.1'
     compile 'com.madgag.spongycastle:core:1.51.0.0'
 
     // Custom PKCS12 keybag parse modifications to support Mumble unencrypted certificates
@@ -64,7 +64,7 @@ android {
 
     // Trigger NDK build on java compilation task.
     task ndkBuild(type: Exec) {
-        commandLine 'ndk-build', '-C', file('src/main/jni/').absolutePath
+        commandLine '/Users/jeidee/Library/Android/android-ndk-r10d/ndk-build', '-C', file('src/main/jni/').absolutePath
     }
 
     tasks.withType(JavaCompile) {

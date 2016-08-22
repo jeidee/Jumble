@@ -24,6 +24,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.morlunk.jumble.Constants;
+import com.morlunk.jumble.JumbleService;
 import com.morlunk.jumble.R;
 import com.morlunk.jumble.model.Channel;
 import com.morlunk.jumble.model.Message;
@@ -56,13 +57,15 @@ public class ModelHandler extends JumbleTCPMessageListener.Stub {
     private final List<Integer> mLocalIgnoreHistory;
     private final IJumbleObserver mObserver;
     private final JumbleLogger mLogger;
+    private final JumbleService mService;
     private int mPermissions;
     private int mSession;
 
-    public ModelHandler(Context context, IJumbleObserver observer, JumbleLogger logger,
+    public ModelHandler(Context context, JumbleService service, IJumbleObserver observer, JumbleLogger logger,
                         @Nullable List<Integer> localMuteHistory,
                         @Nullable List<Integer> localIgnoreHistory) {
         mContext = context;
+        mService = service;
         mChannels = new HashMap<Integer, Channel>();
         mUsers = new HashMap<Integer, User>();
         mLocalMuteHistory = localMuteHistory;
@@ -133,7 +136,7 @@ public class ModelHandler extends JumbleTCPMessageListener.Stub {
         if(msg.hasPosition())
             channel.setPosition(msg.getPosition());
 
-        if(msg.hasParent()) {
+        if(msg.hasParent() && msg.getChannelId() != 0) {
             Channel oldParent = channel.getParent();
             channel.setParent(parent);
             parent.addSubchannel(channel);
@@ -257,8 +260,10 @@ public class ModelHandler extends JumbleTCPMessageListener.Stub {
              */
         }
 
-        if(newUser)
+        if(newUser) {
             mLogger.logInfo(mContext.getString(R.string.chat_notify_connected, MessageFormatter.highlightString(user.getName())));
+
+        }
 
         if(msg.hasSelfDeaf() || msg.hasSelfMute()) {
             if(msg.hasSelfMute())
@@ -475,5 +480,6 @@ public class ModelHandler extends JumbleTCPMessageListener.Stub {
     public void messageServerSync(Mumble.ServerSync msg) {
         mSession = msg.getSession();
         mLogger.logInfo(msg.getWelcomeText());
+        mService.sendDeviceInfo(mSession, true, true);
     }
 }

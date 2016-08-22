@@ -287,7 +287,7 @@ public class JumbleService extends Service implements IJumbleService, JumbleConn
             mConnection.setKeys(mCertificate, mCertificatePassword);
             mConnection.setTrustStore(mTrustStore, mTrustStorePassword, mTrustStoreFormat);
 
-            mModelHandler = new ModelHandler(this, mCallbacks, this,
+            mModelHandler = new ModelHandler(this, this, mCallbacks, this,
                     mLocalMuteHistory, mLocalIgnoreHistory);
             mConnection.addTCPMessageHandlers(mModelHandler);
 
@@ -904,6 +904,15 @@ public class JumbleService extends Service implements IJumbleService, JumbleConn
         Mumble.UserState.Builder usb = Mumble.UserState.newBuilder();
         usb.setSession(session);
         usb.setChannelId(channel);
+        getConnection().sendTCPMessage(usb.build(), JumbleTCPMessageType.UserState);
+    }
+
+    @Override
+    public void sendDeviceInfo(int session, boolean existUsableMic, boolean existUsableSpeaker) {
+        Mumble.UserState.Builder usb = Mumble.UserState.newBuilder();
+        usb.setSession(session);
+        usb.setExistUsableMic(true);
+        usb.setExistUsableSpeaker(true);
         getConnection().sendTCPMessage(usb.build(), JumbleTCPMessageType.UserState);
     }
 

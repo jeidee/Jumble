@@ -13,3 +13,6 @@ src/main/obj/
 
 # Java
 *.class
+
+
+.DS_Store
